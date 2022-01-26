@@ -30,3 +30,10 @@ class TestUserserializer(serializers.Serializer):
     def create(self, validated_data):
         print(validated_data)
         return User.objects.create(**validated_data)
+
+    def update(self, instance, validated_data):
+        print(f" estas es la instacia {instance}")
+        instance.name = validated_data.get('name', instance.name)
+        instance.email = validated_data.get('email', instance.email)
+        instance.save()
+        return instance

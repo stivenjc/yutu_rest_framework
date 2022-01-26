@@ -12,20 +12,6 @@ def user_api_view(request):
     if request.method == 'GET':
         users = User.objects.all()
         user_serializer = UserSerializers(users, many=True)
-
-
-        test_data = {
-            'name': 'stiven',
-            'email': 'adisjimenez@gmail.com'
-        }
-        test_user = TestUserserializer(data=test_data)
-        if test_user.is_valid():
-            test_user.save()
-            print('paso la validacion')
-        else:
-            print(test_user.errors)
-
-
         return Response(user_serializer.data, status=status.HTTP_200_OK)
 
     # create
@@ -54,7 +40,7 @@ def user_detail_api_view(request, pk=None):
         # update
         elif request.method == 'PUT':
             user = User.objects.filter(id=pk).first()
-            user_serializer = UserSerializers(user, data=request.data)
+            user_serializer = TestUserserializer(user, data=request.data)
             if user_serializer.is_valid():
                 user_serializer.save()
                 return Response(user_serializer.data, status=status.HTTP_200_OK)
