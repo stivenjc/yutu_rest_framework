@@ -3,14 +3,14 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from apps.users.models import User
-from apps.users.api.serializers import UserSerializers, TestUserserializer
+from apps.users.api.serializers import UserSerializers
 
 
 @api_view(['GET', 'POST'])
 def user_api_view(request):
     # List
     if request.method == 'GET':
-        users = User.objects.all()
+        users = User.objects.all().values('id', 'name')
         user_serializer = UserSerializers(users, many=True)
         return Response(user_serializer.data, status=status.HTTP_200_OK)
 
@@ -40,7 +40,7 @@ def user_detail_api_view(request, pk=None):
         # update
         elif request.method == 'PUT':
             user = User.objects.filter(id=pk).first()
-            user_serializer = TestUserserializer(user, data=request.data)
+            user_serializer = UserSerializers(user, data=request.data)
             if user_serializer.is_valid():
                 user_serializer.save()
                 return Response(user_serializer.data, status=status.HTTP_200_OK)
