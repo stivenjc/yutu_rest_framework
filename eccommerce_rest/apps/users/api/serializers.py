@@ -11,3 +11,18 @@ class UserSerializers(serializers.ModelSerializer):
 class TestUserserializer(serializers.Serializer):
     name = serializers.CharField(max_length=200)
     email = serializers.EmailField()
+
+    def validate_name(self, value):
+        if 'adrian' in value:
+            raise serializers.ValidationError('este nombre ya esta en uso, use otro')
+        return value
+
+    def validate_email(self, value):
+        if value == '':
+            raise serializers.ValidationError('tiene que indicar un correo')
+        return value
+
+    def validate(self, data):
+        if data['name'] in data['email']:
+            raise serializers.ValidationError('el email no puede contener el nombre')
+        return data

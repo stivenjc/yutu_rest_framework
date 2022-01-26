@@ -15,12 +15,14 @@ def user_api_view(request):
 
 
         test_data = {
-            'name': 'adrian',
-            'email': 'jimenezcardenasd@gmail.com'
+            'name': 'stiven',
+            'email': 'stiven@gmail.com'
         }
         test_user = TestUserserializer(data=test_data)
         if test_user.is_valid():
             print('paso la validacion')
+        else:
+            print(test_user.errors)
 
 
         return Response(user_serializer.data, status=status.HTTP_200_OK)
