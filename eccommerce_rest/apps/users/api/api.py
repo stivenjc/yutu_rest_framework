@@ -3,15 +3,15 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from apps.users.models import User
-from apps.users.api.serializers import UserSerializers
+from apps.users.api.serializers import UserSerializers, UserListSerializers
 
 
 @api_view(['GET', 'POST'])
 def user_api_view(request):
     # List
     if request.method == 'GET':
-        users = User.objects.all().values('id', 'name')
-        user_serializer = UserSerializers(users, many=True)
+        users = User.objects.all().values('id', 'username', 'email', 'password', 'name')
+        user_serializer = UserListSerializers(users, many=True)
         return Response(user_serializer.data, status=status.HTTP_200_OK)
 
     # create
