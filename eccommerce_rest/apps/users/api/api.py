@@ -16,10 +16,11 @@ def user_api_view(request):
 
         test_data = {
             'name': 'stiven',
-            'email': 'stiven@gmail.com'
+            'email': 'adisjimenez@gmail.com'
         }
         test_user = TestUserserializer(data=test_data)
         if test_user.is_valid():
+            test_user.save()
             print('paso la validacion')
         else:
             print(test_user.errors)
