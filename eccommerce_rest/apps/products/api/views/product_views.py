@@ -6,14 +6,10 @@ from apps.base.api import GeneralListApiView
 from apps.products.api.serialializers.product_serializers import ProductSerializer
 
 
-# list con class
-class ProductListAPIview(GeneralListApiView):
-    serializer_class = ProductSerializer
-
-
 # create con class
-class ProductCreateAPIView(generics.CreateAPIView):
+class ProductListCreateAPIView(generics.ListCreateAPIView):
     serializer_class = ProductSerializer
+    queryset = ProductSerializer.Meta.model.objects.filter(state=True)
 
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
@@ -65,4 +61,4 @@ class ProductUpdateAPIView(generics.UpdateAPIView):
             if product_serializer.is_valid():
                 product_serializer.save()
                 return Response(product_serializer.data, status=status.HTTP_200_OK)
-            return Response (product_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(product_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
