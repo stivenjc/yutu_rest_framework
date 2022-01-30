@@ -10,6 +10,6 @@ class MesaureUNitAdmin(admin.ModelAdmin):
 
 admin.site.register(MeasureUnit, MesaureUNitAdmin)
 
-
 admin.site.register(Product)
+admin.site.register(CategoryProduct)
 admin.site.register(Indicator)
