@@ -6,7 +6,7 @@ from apps.base.api import GeneralListApiView
 from apps.products.api.serialializers.product_serializers import ProductSerializer
 
 
-# create con class
+# create y listar con class
 class ProductListCreateAPIView(generics.ListCreateAPIView):
     serializer_class = ProductSerializer
     queryset = ProductSerializer.Meta.model.objects.filter(state=True)
@@ -19,35 +19,15 @@ class ProductListCreateAPIView(generics.ListCreateAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-# listar un solo objects con class
-class ProductRetrieveAPIView(generics.RetrieveAPIView):
-    serializer_class = ProductSerializer
-
-    def get_queryset(self):
-        return self.get_serializer().Meta.model.objects.filter(state=True)
-
-
-# eliminar un solo objec con class
-class ProductDestroyAPIView(generics.DestroyAPIView):
-    serializer_class = ProductSerializer
-
-    def get_queryset(self):
-        return self.get_serializer().Meta.model.objects.filter(state=True)
-
-    def delete(self, request, pk=None):
-        product = self.get_queryset().filter(id=pk).first()
-        if product:
-            product.state = False
-            product.save()
-            return Response({'mesage': 'product eliminado correctamente!'}, status=status.HTTP_200_OK)
-        return Response({'error': 'no existe un producto con estos datos'}, status=status.HTTP_400_BAD_REQUEST)
-
-
-class ProductUpdateAPIView(generics.UpdateAPIView):
+# listar, actualizar y eliminar un solo objects con class
+class ProductRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ProductSerializer
 
     def get_queryset(self, pk=None):
-        return self.get_serializer().Meta.model.objects.filter(state=True).filter(id=pk).first()
+        if pk is None:
+            return self.get_serializer().Meta.model.objects.filter(state=True)
+        else:
+            return self.get_serializer().Meta.model.objects.filter(id=pk, state=True).first()
 
     def patch(self, request, pk=None):
         if self.get_queryset(pk):
@@ -62,3 +42,11 @@ class ProductUpdateAPIView(generics.UpdateAPIView):
                 product_serializer.save()
                 return Response(product_serializer.data, status=status.HTTP_200_OK)
             return Response(product_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk=None):
+        product = self.get_queryset().filter(id=pk).first()
+        if product:
+            product.state = False
+            product.save()
+            return Response({'mesage': 'product eliminado correctamente!'}, status=status.HTTP_200_OK)
+        return Response({'error': 'no existe un producto con estos datos'}, status=status.HTTP_400_BAD_REQUEST)
