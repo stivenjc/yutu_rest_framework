@@ -1,9 +1,7 @@
-
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
@@ -15,7 +13,6 @@ SECRET_KEY = 'django-insecure-#t8+vswuhvs*!7g4ddste(^te66(3mnr4%jy&7mt5)4i6*y4$u
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -31,6 +28,8 @@ BASE_APPS = [
 THIRD_APPS = [
     'rest_framework',
     'simple_history',
+    'drf_yasg',
+
 ]
 
 LOCAL_APPS = [
@@ -72,7 +71,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'eccommerce_rest.wsgi.application'
 
-
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
 
@@ -91,7 +89,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
 
@@ -103,8 +100,14 @@ USE_I18N = True
 
 USE_TZ = True
 
-#esto es para decirle que modelos de usuarios va a utilizar por defecto
+# esto es para decirle que modelos de usuarios va a utilizar por defecto
 AUTH_USER_MODEL = 'users.User'
+
+# es confuguracion de la aplicacion de documentacion de urls.
+# para encoger los enpoins en la vista de la aplicaacion
+SWAGGER_SETTINGS = {
+    'DOC_EXPANSION': 'none'
+}
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
