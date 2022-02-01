@@ -70,6 +70,9 @@ TEMPLATES = [
     },
 ]
 
+# tiempo de expiracion de token
+TOKEN_EXPIRED_AFTER_SECONDSS = 10
+
 WSGI_APPLICATION = 'eccommerce_rest.wsgi.application'
 
 # Password validation
