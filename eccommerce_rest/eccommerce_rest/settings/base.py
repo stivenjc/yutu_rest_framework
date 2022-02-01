@@ -27,6 +27,7 @@ BASE_APPS = [
 
 THIRD_APPS = [
     'rest_framework',
+    'rest_framework.authtoken',
     'simple_history',
     'drf_yasg',
 
