@@ -30,6 +30,7 @@ THIRD_APPS = [
     'rest_framework.authtoken',
     'simple_history',
     'drf_yasg',
+    "corsheaders",
 
 ]
 
@@ -42,6 +43,7 @@ LOCAL_APPS = [
 INSTALLED_APPS = BASE_APPS + THIRD_APPS + LOCAL_APPS
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -91,6 +93,16 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
+]
+
+
+#congiguracion de los cors , esto es para que un frontend
+# pueda comunicarse con nuestra api desde otro puerto, en este caso desd el localhost:3000
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+]
+CORS_ORIGIN_WHITELIST = [
+    "http://localhost:3000",
 ]
 
 # Internationalization
