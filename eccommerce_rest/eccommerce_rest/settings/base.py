@@ -71,7 +71,7 @@ TEMPLATES = [
 ]
 
 # tiempo de expiracion de token
-TOKEN_EXPIRED_AFTER_SECONDSS = 10
+TOKEN_EXPIRED_AFTER_SECONDSS = 900
 
 WSGI_APPLICATION = 'eccommerce_rest.wsgi.application'
 

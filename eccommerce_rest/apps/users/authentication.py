@@ -8,6 +8,7 @@ from eccommerce_rest.settings.base import TOKEN_EXPIRED_AFTER_SECONDSS
 
 # timpo de expicaion del token
 class ExpiringTokenAuthentication(TokenAuthentication):
+    expired = False
 
     def expires_in(self, token):
         time_elapsed = timezone.now() - token.created
@@ -20,21 +21,28 @@ class ExpiringTokenAuthentication(TokenAuthentication):
     def token_expire_handler(self, token):
         is_expire = self.is_token_expired(token)
         if is_expire:
-            print('token a expirado')
+            self.expired = True
+            user = token.user
+            token.delete()
+            token = self.get_model().objects.create(user=user)
 
-        return is_expire
+        return is_expire, token
 
     def authenticate_credentials(self, key):
+        message, token, user = None, None, None
         try:
             token = self.get_model().objects.select_related('user').get(key=key)
-        except self.get_model.DoesNotExist:
-            raise AuthenticationFailed('token invalido')
+            user = token.user
+        except self.get_model().DoesNotExist:
+            message = 'token invalido'
+            self.expired = True
 
-        if not token.user.is_active:
-            raise AuthenticationFailed('Usuario no activo o eliminado')
+        if token is not None:
+            if not token.user.is_active:
+                message = 'Usuario no activo o eliminado'
 
-        is_expired = self.token_expire_handler(token)
-        if is_expired:
-            raise AuthenticationFailed('SU toeken a expirado')
+            is_expired = self.token_expire_handler(token)
+            if is_expired:
+                message = 'SU toeken a expirado'
 
-        return (token.user, token)
+        return (user, token, message, self.expired)
