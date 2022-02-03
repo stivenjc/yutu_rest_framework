@@ -41,7 +41,7 @@ urlpatterns = [
     re_path(r'^swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     re_path(r'^redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
     path('usuario/', include('apps.users.api.urls')),
-    path('', Login.as_view(), name='login'),
+    path('login', Login.as_view(), name='login'),
     path('refresh-token/', UserToken.as_view(), name='refresh_token'),
     path('logout/', Logout.as_view(), name='logout'),
     path('products/', include('apps.products.api.routers')),
