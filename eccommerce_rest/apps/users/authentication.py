@@ -3,8 +3,6 @@ from django.utils import timezone
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.exceptions import AuthenticationFailed
 
-from eccommerce_rest.settings.base import TOKEN_EXPIRED_AFTER_SECONDSS
-
 
 # timpo de expicaion del token
 class ExpiringTokenAuthentication(TokenAuthentication):

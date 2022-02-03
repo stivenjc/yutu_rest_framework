@@ -35,11 +35,21 @@ schema_view = get_schema_view(
     permission_classes=[permissions.AllowAny],
 )
 
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
+
 urlpatterns = [
     path('admin/', admin.site.urls),
+    # rutasd sobre la documentacion de de las vistas
     re_path(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
     re_path(r'^swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     re_path(r'^redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+    # rutas de la app simplejwt
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    # mis rutas
     path('usuario/', include('apps.users.api.urls')),
     path('login', Login.as_view(), name='login'),
     path('refresh-token/', UserToken.as_view(), name='refresh_token'),

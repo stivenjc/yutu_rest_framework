@@ -31,6 +31,7 @@ THIRD_APPS = [
     'simple_history',
     'drf_yasg',
     "corsheaders",
+    'rest_framework_simplejwt',
 
 ]
 
@@ -72,9 +73,6 @@ TEMPLATES = [
     },
 ]
 
-# tiempo de expiracion de token
-TOKEN_EXPIRED_AFTER_SECONDSS = 900
-
 WSGI_APPLICATION = 'eccommerce_rest.wsgi.application'
 
 # Password validation
@@ -95,8 +93,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
-#congiguracion de los cors , esto es para que un frontend
+# congiguracion de los cors , esto es para que un frontend
 # pueda comunicarse con nuestra api desde otro puerto, en este caso desd el localhost:3000
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
@@ -105,6 +102,16 @@ CORS_ORIGIN_WHITELIST = [
     "http://localhost:3000",
 ]
 
+# authecticaion global de simple jwt
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+    # esto espara pojerlo el token de manera global, en todas la rutas
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    )
+}
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
 

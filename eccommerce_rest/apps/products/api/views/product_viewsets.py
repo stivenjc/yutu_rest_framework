@@ -1,13 +1,11 @@
-from rest_framework import generics, viewsets
+from rest_framework import viewsets
 from rest_framework import status
 from rest_framework.response import Response
-from apps.users.authentication_mixins import Authentication
-from apps.base.api import GeneralListApiView
 from apps.products.api.serialializers.product_serializers import ProductSerializer
 
 
 # creando nuestro primer viewsets
-class ProductViewsets(Authentication, viewsets.ModelViewSet):
+class ProductViewsets(viewsets.ModelViewSet):
     serializer_class = ProductSerializer
 
     def get_queryset(self, pk=None):
