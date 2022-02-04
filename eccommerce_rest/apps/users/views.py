@@ -1,105 +1,45 @@
-# creando token
-from datetime import datetime
-
-from django.contrib.sessions.models import Session
+from django.contrib.auth import authenticate
 from rest_framework import status
 from rest_framework.authtoken.views import ObtainAuthToken
-from rest_framework.authtoken.models import Token
+from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
+from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.views import APIView
+from rest_framework_simplejwt.views import TokenObtainPairView
 
-from apps.users.api.serializers import UserTokenSerializer
-from apps.users.authentication_mixins import Authentication
-
-
-class UserToken(Authentication, APIView):
-
-    def get(self, request, *args, **kwargs):
-        """
-        validate token.
+from apps.users.api.serializers import CustonTokenObtainParSerializer, CustomUseSerializer
+from apps.users.models import User
 
 
-        paramet.
-        """
-        try:
-            user_token = Token.objects.get_or_create(
-                user=self.user)
-            user = UserTokenSerializer(user=self.user)
-            return Response({
-                'token': user_token.key,
-                'user': user.data
-            })
-        except:
-            return Response({'error': 'credenciales enviadas incorrectas'}, status=status.HTTP_400_BAD_REQUEST)
-
-
-# craando el loggin
-class Login(ObtainAuthToken):
+class Login(TokenObtainPairView):
+    serializer_class = CustonTokenObtainParSerializer
 
     def post(self, request, *args, **kwargs):
-        login_serializer = self.serializer_class(data=request.data, context={'request': request})
-        if login_serializer.is_valid():
-            user = login_serializer.validated_data['user']
-            if user.is_active:
-                token, created = Token.objects.get_or_create(user=user)
-                user_serializer = UserTokenSerializer(user)
-                if created:
-                    return Response({
-                        'token': token.key,
-                        'user': user_serializer.data,
-                        'message': 'inicio de sexion Exitoso'
-                    }, status=status.HTTP_201_CREATED)
-                else:
+        username = request.data.get('username', '')
+        password = request.data.get('password', '')
+        user = authenticate(
+            username=username,
+            password=password
 
-                    all_sessions = Session.objects.filter(expire_date__gte=datetime.now())
-                    if all_sessions.exists():
-                        for session in all_sessions:
-                            session_data = session.get_decoded()
-                            if user.id == int(session_data.get('_auth_user_id')):
-                                session.delete()
-                    token.delete()
-                    token = Token.objects.create(user=user)
-                    return Response({
-                        'token': token.key,
-                        'user': user_serializer.data,
-                        'message': 'inicio de sexion Exitoso'
-                    }, status=status.HTTP_201_CREATED)
-
-                    # return Response({'error': 'ya se ah iniciado sesion con este usuario'}, status=status.HTTP_409_CONFLICT)
-
-            else:
-                return Response({'error': 'este usuario no puede iniciar secion'}, status=status.HTTP_401_UNAUTHORIZED)
-        else:
-            return Response({'error': 'nombre del usuario o contraseña incorrecta'}, status=status.HTTP_400_BAD_REQUEST)
-        return Response({'mensaje': 'hola desde response'}, status=status.HTTP_200_OK)
+        )
+        if user:
+            login_serializer = self.serializer_class(data=request.data)
+            if login_serializer.is_valid():
+                user_serializer = CustomUseSerializer(user)
+                return Response({
+                    'token': login_serializer.validated_data.get('access'),
+                    'refresh-token': login_serializer.validated_data.get('refresh'),
+                    'user': user_serializer.data,
+                    'message': 'inicio de sesion exitoso'
+                }, status=status.HTTP_200_OK)
+            return Response({'error': 'contraseña o nombre de usuario incorrecta'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'error': 'contraseña o nombre de usuario incorrecta'}, status=status.HTTP_400_BAD_REQUEST)
 
 
-# creando el logout
-class Logout(APIView):
-
-    def get(self, request, *arg, **kwargs):
-        try:
-            token = request.GET.get('token')
-            token = Token.objects.filter(key=token).first()
-            print(token)
-
-            if token:
-                user = token.user
-
-                all_sessions = Session.objects.filter(expire_date__gte=datetime.now())
-                if all_sessions.exists():
-                    for session in all_sessions:
-                        session_data = session.get_decoded()
-                        if user.id == int(session_data.get('_auth_user_id')):
-                            session.delete()
-
-                token.delete()
-
-                session_message = 'sesion edel usuario eliminadas.'
-                token_message = 'token eliminado.'
-                return Response({'token_message': token_message, 'session_message': session_message},
-                                status=status.HTTP_200_OK)
-            return Response({'error': 'no se a encontrado un usuario con estascredenciales'},
-                            status=status.HTTP_400_BAD_REQUEST)
-        except:
-            Response({'error': 'no se a encontrdo token en descripcion'}, status=status.HTTP_409_CONFLICT)
+class Logout(GenericAPIView):
+    def post(self, request, *args, **kwargs):
+        user = User.objects.filter(id=request.data.get('user', ''))
+        if user.exists():
+            RefreshToken.for_user(user.first())
+            return Response({'message': 'sesion cerrada correctamente'}, status=status.HTTP_200_OK)
+        return Response({'error': 'no existe este eusuario.'}, status=status.HTTP_400_BAD_REQUEST)
