@@ -1,10 +1,10 @@
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, action
 from rest_framework import viewsets
 from apps.users.models import User
-from apps.users.api.serializers import UserSerializers, UserListSerializers, UpdateUserSerializer
+from apps.users.api.serializers import UserSerializers, UserListSerializers, UpdateUserSerializer, PasswordSerializer
 
 
 class UserViewSet(viewsets.GenericViewSet):
@@ -24,6 +24,29 @@ class UserViewSet(viewsets.GenericViewSet):
             self.queryset = self.model.objects.filter(is_active=True).values('id', 'username',
                                                                              'email', 'name')
         return self.queryset
+
+    @action(detail=True, methods=['POST'], url_path='cambio_pass')
+    def set_password(self, request, pk=None):
+        """
+        esta funcion sirve para poder actualizar nuestra contraseña
+        recibe
+        * password
+        *password2
+         tetorna segn lo que le envies
+
+        """
+        user = self.get_object(pk)
+        password_serializer = PasswordSerializer(data=request.data)
+        if password_serializer.is_valid():
+            user.set_password(password_serializer.validated_data['password'])
+            user.save()
+            return Response({
+                'message': 'contraseña actualizada correctamente',
+            })
+        return Response({
+            'message': 'hay errores en imformacion enviada',
+            'error': password_serializer.errors
+        }, status=status.HTTP_400_BAD_REQUEST)
 
     def list(self, request):
         users = self.get_queryset()
