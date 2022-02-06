@@ -1,5 +1,6 @@
 from rest_framework import viewsets
 from rest_framework import status
+from rest_framework.parsers import JSONParser, MultiPartParser
 from rest_framework.response import Response
 from apps.products.api.serialializers.product_serializers import ProductSerializer
 
@@ -7,6 +8,7 @@ from apps.products.api.serialializers.product_serializers import ProductSerializ
 # creando nuestro primer viewsets
 class ProductViewsets(viewsets.ModelViewSet):
     serializer_class = ProductSerializer
+    parser_classes = (JSONParser, MultiPartParser)
 
     def get_queryset(self, pk=None):
         if pk is None:

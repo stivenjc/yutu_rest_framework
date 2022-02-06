@@ -1,11 +1,13 @@
 from django.contrib import admin
 from django.urls import path, include, re_path
+from django.views.static import serve
 
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
 from apps.users.views import Login, Logout
+from django.conf import settings
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -39,4 +41,10 @@ urlpatterns = [
     path('login/', Login.as_view(), name='login'),
     path('logout/', Logout.as_view(), name='logout'),
     path('products/', include('apps.products.api.routers')),
+]
+
+urlpatterns += [
+    re_path(r'^media/(?P<patn>.*)$', serve, {
+        'documento_root': settings.MEDIA_ROOT,
+    }),
 ]

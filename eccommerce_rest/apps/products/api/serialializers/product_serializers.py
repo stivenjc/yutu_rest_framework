@@ -13,7 +13,7 @@ class ProductSerializer(serializers.ModelSerializer):
             'id': instance.id,
             'description': instance.description,
             'name': instance.name,
-            'image': instance.image.url if instance.image.name != '' and instance.image.name is not None else '',
+            'image': instance.image.url if instance.image != '' else '',
             'measure_unit': instance.measure_unit.description if instance.measure_unit is not None else '',
             'category_product': instance.category_product.description if instance.category_product is not None else ''
         }
