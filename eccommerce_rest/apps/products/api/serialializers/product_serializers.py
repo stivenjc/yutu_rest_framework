@@ -8,6 +8,35 @@ class ProductSerializer(serializers.ModelSerializer):
         model = Product
         exclude = ['state', 'created_date', 'modified_date', 'deleted_date']
 
+    def validate_measure_unit(self, value):
+        """
+        esto es para hacer uan validacion de que llege el valor del campo measure_unit,
+         colocamos primero validate_ seguido del campo que deseemos validar en este caso es measure_unit
+        """
+        if value == '' or value == None:
+            raise serializers.ValidationError('debes ingresar una unidad de medida')
+        return value
+
+    def validate_category_product(self, value):
+        if value == '' or value == None:
+            raise serializers.ValidationError('debes ingresar una categoria de producto')
+        return value
+
+    def validate(self, data):
+        """
+        esto es para calidar que la llave del valor llega ejemplo
+         {"measure_unit": ""], aqui no estoy validando lo que llega como valor del campo solo lo que llega como keys()
+        """
+        if 'measure_unit' not in data.keys():
+            raise serializers.ValidationError({
+                'measure:unit': 'debes ingresar un aunidad de medida'
+            })
+
+        if 'category_product' not in data.keys():
+            raise serializers.ValidationError({
+                'category_product': 'debes ingresar una categorya de product'
+            })
+
     def to_representation(self, instance):
         return {
             'id': instance.id,

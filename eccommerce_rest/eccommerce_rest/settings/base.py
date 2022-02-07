@@ -41,6 +41,7 @@ LOCAL_APPS = [
     'apps.users.apps.UsersConfig',
     'apps.products.apps.ProductsConfig',
     'apps.base.apps.BaseConfig',
+    'apps.expense_manager.apps.ExpenseManagerConfig',
 ]
 
 INSTALLED_APPS = BASE_APPS + THIRD_APPS + LOCAL_APPS
