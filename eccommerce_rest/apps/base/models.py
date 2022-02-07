@@ -22,5 +22,3 @@ class BaseModel(models.Model):
 
     class Meta:
         abstract = True
-        verbose_name = 'Model Base'
-        verbose_name = 'Model Base'

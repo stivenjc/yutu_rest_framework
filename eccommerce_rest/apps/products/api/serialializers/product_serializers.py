@@ -36,6 +36,7 @@ class ProductSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({
                 'category_product': 'debes ingresar una categorya de product'
             })
+        return data
 
     def to_representation(self, instance):
         return {
